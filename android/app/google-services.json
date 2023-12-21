@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "758027068093",
+    "project_id": "praticalworkamov2023-b4207",
+    "storage_bucket": "praticalworkamov2023-b4207.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758027068093:android:eb432992b774fee9f14dd4",
+        "android_client_info": {
+          "package_name": "com.example.tp_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_XlbRQAO694l0Okpvqhypj-Mj9lh4qtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758027068093:android:0d5be010a5bbef44f14dd4",
+        "android_client_info": {
+          "package_name": "pt.isec.amov"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_XlbRQAO694l0Okpvqhypj-Mj9lh4qtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
