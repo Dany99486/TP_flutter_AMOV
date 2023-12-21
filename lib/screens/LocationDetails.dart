@@ -7,12 +7,16 @@ class LocationDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    int ? selectedValue;
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Location location = args['location'];
-    final Function(int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
-    final int initialLocationGradeValue = args['initialLocationGradeValue'];
-    int selectedValue = initialLocationGradeValue;
+    final Function(String,int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
+    final dynamic initialLocationGradeValue = args['initialLocationGradeValue'];
+    print("Nota ${location.name} -> ${initialLocationGradeValue}");
+    if(initialLocationGradeValue != -1) {
+      selectedValue = initialLocationGradeValue;
+    }
+
     final storage = FirebaseStorage.instance;
     Reference ref = storage.ref().child(location.photoUrl!);
     int? nValue;
@@ -136,7 +140,7 @@ class LocationDetailPage extends StatelessWidget {
                   icon: Icon(Icons.send),
                   onPressed: () {
                     if (nValue != null) {
-                      changeLocationGradeFunction(nValue!); //salva no search-preferences
+                      changeLocationGradeFunction(location.id,nValue!); //salva no search-preferences
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {

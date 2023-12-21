@@ -16,22 +16,49 @@ class _LocationPageState extends State<LocationPage> {
   late Stream<List<Location>> locationsStream;
   bool orderByDistance = false;
   bool orderByAlphabetic = false;
-  int _myLocationGrade = 0;
+  Map<String, dynamic>? allSharedPreferences;
 
-  Future<void> initLocationGrade() async {
+  Future<Map<String, dynamic>> loadAllSharedPreferences() async {
     var prefs = await SharedPreferences.getInstance();
-    setState (() { _myLocationGrade = prefs.getInt ('rate') ?? 0; } );
+    return prefs.getKeys().fold<Map<String, dynamic>>(
+        {},
+            (Map<String, dynamic> accumulator, String key) {
+          accumulator[key] = prefs.get(key);
+          return accumulator;
+        }
+    );
   }
 
-  void _changeLocationGrade(int newGradeValue) async {
-    setState (() { _myLocationGrade = newGradeValue; } );
-    var prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('rate', _myLocationGrade);
+  Future<void> loadSharedPreferences() async {
+    Map<String, dynamic> sharedPreferences = await loadAllSharedPreferences();
+    setState(() {
+      allSharedPreferences = sharedPreferences;
+      print('SharedPreferences carregadas: $allSharedPreferences');
+    });
+  }
+
+
+  void setSharedPreferences(String key, dynamic value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (value is String) {
+
+      await prefs.setString(key, value);
+      allSharedPreferences?.clear();
+      loadSharedPreferences();
+
+    } else if (value is int) {
+
+      await prefs.setInt(key, value);
+      allSharedPreferences?.clear();
+      loadSharedPreferences();
+
+    }
   }
 
   void initState() {
     super.initState();
-    initLocationGrade();
+    loadSharedPreferences();
     locationsStream = getLocationsStream();
   }
 
@@ -180,10 +207,9 @@ class _LocationPageState extends State<LocationPage> {
                                         LocationDetailPage.routeName,
                                         arguments: {
                                           'location': snapshot.data![index],
-                                          'changeLocationGradeFunction': _changeLocationGrade,
-                                          'initialLocationGradeValue': _myLocationGrade
+                                          'changeLocationGradeFunction': setSharedPreferences,
+                                          'initialLocationGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1
                                         }
-
                                     );
                                   },
                                 ),
