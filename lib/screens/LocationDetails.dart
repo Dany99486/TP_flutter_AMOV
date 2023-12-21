@@ -8,14 +8,14 @@ class LocationDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Location location = args['location'];
-    final Function(int) changeGradeFunction = args['changeGradeFunction'];
-    final int initialGradeValue = args['initialGradeValue'];
-    int selectedValue = initialGradeValue;
+    final Function(int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
+    final int initialLocationGradeValue = args['initialLocationGradeValue'];
+    int selectedValue = initialLocationGradeValue;
     final storage = FirebaseStorage.instance;
     Reference ref = storage.ref().child(location.photoUrl!);
+    int? nValue;
 
     return Scaffold(
       appBar: AppBar(
@@ -111,10 +111,10 @@ class LocationDetailPage extends StatelessWidget {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
-                    hint: Text('Evaluate Location'),
+                    hint: Text('Rate Location'),
                     value: selectedValue,
                     onChanged: (newValue) {
-                      changeGradeFunction(newValue!);
+                      nValue = newValue;
                     },
                     items: List.generate(5, (index) {
                       return DropdownMenuItem<int>(
@@ -135,7 +135,52 @@ class LocationDetailPage extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    // Lógica para submeter a avaliação
+                    if (nValue != null) {
+                      changeLocationGradeFunction(nValue!); //salva no search-preferences
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Rating saved!'),
+                              content: Text('Your rating has been saved successfully.'),
+                              backgroundColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Error'),
+                            content: Text('Error saving your rating'),
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
                   },
                 ),
               ],

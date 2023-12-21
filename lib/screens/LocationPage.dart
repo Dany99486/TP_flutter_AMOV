@@ -16,22 +16,22 @@ class _LocationPageState extends State<LocationPage> {
   late Stream<List<Location>> locationsStream;
   bool orderByDistance = false;
   bool orderByAlphabetic = false;
-  int _myGrade = 0;
+  int _myLocationGrade = 0;
 
-  Future<void> initGrade() async {
+  Future<void> initLocationGrade() async {
     var prefs = await SharedPreferences.getInstance();
-    setState (() { _myGrade = prefs.getInt ('rate') ?? 0; } );
+    setState (() { _myLocationGrade = prefs.getInt ('rate') ?? 0; } );
   }
 
-  void _changeGrade(int newGradeValue) async {
-    setState (() { _myGrade = newGradeValue; } );
+  void _changeLocationGrade(int newGradeValue) async {
+    setState (() { _myLocationGrade = newGradeValue; } );
     var prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('rate', _myGrade);
+    await prefs.setInt('rate', _myLocationGrade);
   }
 
   void initState() {
     super.initState();
-    initGrade();
+    initLocationGrade();
     locationsStream = getLocationsStream();
   }
 
@@ -180,8 +180,8 @@ class _LocationPageState extends State<LocationPage> {
                                         LocationDetailPage.routeName,
                                         arguments: {
                                           'location': snapshot.data![index],
-                                          'changeGradeFunction': _changeGrade,
-                                          'initialGradeValue': _myGrade
+                                          'changeLocationGradeFunction': _changeLocationGrade,
+                                          'initialLocationGradeValue': _myLocationGrade
                                         }
 
                                     );
