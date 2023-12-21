@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/Location.dart';
 import 'LocationDetails.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key, required this.title});
@@ -15,9 +16,22 @@ class _LocationPageState extends State<LocationPage> {
   late Stream<List<Location>> locationsStream;
   bool orderByDistance = false;
   bool orderByAlphabetic = false;
+  int _myGrade = 0;
+
+  Future<void> initGrade() async {
+    var prefs = await SharedPreferences.getInstance();
+    setState (() { _myGrade = prefs.getInt ('rate') ?? 0; } );
+  }
+
+  void _changeGrade(int newGradeValue) async {
+    setState (() { _myGrade = newGradeValue; } );
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('rate', _myGrade);
+  }
 
   void initState() {
     super.initState();
+    initGrade();
     locationsStream = getLocationsStream();
   }
 
@@ -85,8 +99,7 @@ class _LocationPageState extends State<LocationPage> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
+      body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Divider(),
@@ -165,7 +178,12 @@ class _LocationPageState extends State<LocationPage> {
                                     Navigator.pushNamed(
                                         context,
                                         LocationDetailPage.routeName,
-                                        arguments: snapshot.data![index]
+                                        arguments: {
+                                          'location': snapshot.data![index],
+                                          'changeGradeFunction': _changeGrade,
+                                          'initialGradeValue': _myGrade
+                                        }
+
                                     );
                                   },
                                 ),
@@ -180,7 +198,6 @@ class _LocationPageState extends State<LocationPage> {
               },
             ),
           ],
-        ),
       ),
     );
   }

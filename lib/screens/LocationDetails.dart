@@ -7,21 +7,28 @@ class LocationDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Location;
+
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final Location location = args['location'];
+    final Function(int) changeGradeFunction = args['changeGradeFunction'];
+    final int initialGradeValue = args['initialGradeValue'];
+    int selectedValue = initialGradeValue;
     final storage = FirebaseStorage.instance;
-    Reference ref = storage.ref().child(args.photoUrl!);
+    Reference ref = storage.ref().child(location.photoUrl!);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '${args.grade}',
+              '${location.grade}',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Icon(Icons.star, color: Colors.amber),
             Text(
-              args.name,
+              location.name,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -100,12 +107,29 @@ class LocationDetailPage extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: TextFormField(
+                  child: DropdownButtonFormField<int>(
                     decoration: InputDecoration(
-                      hintText: 'Evaluate Location',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), // Ajusta o preenchimento interno
                     ),
+                    hint: Text('Evaluate Location'),
+                    value: selectedValue,
+                    onChanged: (newValue) {
+                      changeGradeFunction(newValue!);
+                    },
+                    items: List.generate(5, (index) {
+                      return DropdownMenuItem<int>(
+                        value: index + 1,
+                        child:
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text((index + 1).toString()),
+                            const Icon(Icons.star, color: Colors.amber),
+                          ],
+                        ),
+
+                      );
+                    }),
                   ),
                 ),
                 IconButton(
@@ -133,7 +157,7 @@ class LocationDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    args.description!,
+                    location.description!,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 20),
@@ -152,7 +176,7 @@ class LocationDetailPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "Created by: ${args.createdBy!}",
+              "Created by: ${location.createdBy!}",
               style:const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
