@@ -29,11 +29,11 @@ class _LocationPageState extends State<LocationPage> {
     );
   }
 
+
   Future<void> loadSharedPreferences() async {
     Map<String, dynamic> sharedPreferences = await loadAllSharedPreferences();
     setState(() {
       allSharedPreferences = sharedPreferences;
-      print('SharedPreferences carregadas: $allSharedPreferences');
     });
   }
 
@@ -146,7 +146,6 @@ class _LocationPageState extends State<LocationPage> {
                     onChanged: (value) {
                       setState(() {
                         orderByDistance = value!;
-                        // Apply logic for ordering by distance
                       });
                     },
                   ),
@@ -158,7 +157,6 @@ class _LocationPageState extends State<LocationPage> {
                     onChanged: (value) {
                       setState(() {
                         orderByAlphabetic = value!;
-                        // Apply logic for ordering alphabetically
                       });
                     },
                   ),
@@ -176,6 +174,9 @@ class _LocationPageState extends State<LocationPage> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
+                  if (orderByAlphabetic) {
+                    snapshot.data!.sort((a, b) => a.name.compareTo(b.name));
+                  }
                   return Expanded(
                     child: ListView.builder(
                       itemCount: snapshot.data!.length,
@@ -227,4 +228,5 @@ class _LocationPageState extends State<LocationPage> {
       ),
     );
   }
+
 }

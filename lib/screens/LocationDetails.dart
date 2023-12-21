@@ -53,7 +53,7 @@ class LocationDetailPage extends StatelessWidget {
                   width: double.infinity,
                   child: Image.network(
                     snapshot.data!,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.scaleDown,
                   ),
                 );
               } else {
