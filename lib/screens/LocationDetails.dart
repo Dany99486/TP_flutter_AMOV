@@ -28,7 +28,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
       );
       if(dec){
         var values = data['dislikes'] - 1;
-        if(values > 0){
+        if(values >= 0){
           document.update({'dislikes': values}).then(
                   (res) => setState(() { _error = null; }),
               onError: (e) => setState(() { _error = e.toString();})
@@ -53,10 +53,18 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
       );
       if(dec){
         var values = data['likes'] - 1;
-        document.update({'likes': values}).then(
-                (res) => setState(() { _error = null; }),
-            onError: (e) => setState(() { _error = e.toString();})
-        );
+        if(values >= 0) {
+          document.update({'likes': values}).then(
+                  (res) =>
+                  setState(() {
+                    _error = null;
+                  }),
+              onError: (e) =>
+                  setState(() {
+                    _error = e.toString();
+                  })
+          );
+        }
       }
 
     } else {
