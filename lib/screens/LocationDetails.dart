@@ -1,36 +1,89 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/Location.dart';
 
-class LocationDetailPage extends StatelessWidget {
+class LocationDetailPage extends StatefulWidget {
   static const String routeName = '/locationDetail';
 
   @override
+  _LocationDetailPageState createState() => _LocationDetailPageState();
+}
+
+class _LocationDetailPageState extends State<LocationDetailPage> {
+  String? _error;
+  Color likeButtonColor = Colors.grey;
+  int initialLocationGradeValue = 0;
+  bool isLiked = false;
+
+  void incrementeLikes(String docName, bool dec) async {
+    var db = FirebaseFirestore.instance;
+    var document = db.collection('locations').doc(docName);
+    var data = await document.get(const GetOptions(source: Source.server));
+    if (data.exists) {
+      var values = data['likes'] + 1;
+      document.update({'likes': values}).then(
+              (res) => setState(() { _error = null; }),
+          onError: (e) => setState(() { _error = e.toString();})
+      );
+      if(dec){
+        var values = data['dislikes'] - 1;
+        if(values > 0){
+          document.update({'dislikes': values}).then(
+                  (res) => setState(() { _error = null; }),
+              onError: (e) => setState(() { _error = e.toString();})
+          );
+        }
+      }
+
+    } else {
+      setState(() { _error = "Document doesn't exist";});
+    }
+  }
+
+  void incrementeDislikes(String docName, bool dec) async {
+    var db = FirebaseFirestore.instance;
+    var document = db.collection('locations').doc(docName);
+    var data = await document.get(const GetOptions(source: Source.server));
+    if (data.exists) {
+      var values = data['dislikes'] + 1;
+      document.update({'dislikes': values}).then(
+              (res) => setState(() { _error = null; }),
+          onError: (e) => setState(() { _error = e.toString();})
+      );
+      if(dec){
+        var values = data['likes'] - 1;
+        document.update({'likes': values}).then(
+                (res) => setState(() { _error = null; }),
+            onError: (e) => setState(() { _error = e.toString();})
+        );
+      }
+
+    } else {
+      setState(() { _error = "Document doesn't exist";});
+    }
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    int ? selectedValue;
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Location location = args['location'];
-    final Function(String,int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
-    final dynamic initialLocationGradeValue = args['initialLocationGradeValue'];
-    print("Nota ${location.name} -> ${initialLocationGradeValue}");
-    if(initialLocationGradeValue != -1) {
-      selectedValue = initialLocationGradeValue;
+    final Function(String, int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
+    dynamic initialLocationGradeValue = args['initialLocationGradeValue'];
+    if(initialLocationGradeValue == 1) {
+      isLiked = true;
+    } else if(initialLocationGradeValue == 2) {
+      isLiked = false;
     }
-
     final storage = FirebaseStorage.instance;
     Reference ref = storage.ref().child(location.photoUrl!);
-    int? nValue;
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '${location.grade}',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Icon(Icons.star, color: Colors.amber),
             Text(
               location.name,
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -61,131 +114,78 @@ class LocationDetailPage extends StatelessWidget {
               }
             },
           ),
-          Divider(),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.symmetric(vertical: 40.0),
+            child: Divider(),
+          ),
+          initialLocationGradeValue == 1 || initialLocationGradeValue == 2
+              ? Padding(
+            padding: EdgeInsets.all(8.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                InkWell(
-                  onTap: () {
-                    // Lógica para abrir o mapa
+                IconButton(
+                  onPressed: () {
+                      if(!isLiked) {
+                        setState(() {
+                          changeLocationGradeFunction(location.id, 1);
+                          incrementeLikes(location.id, true);
+                          isLiked = true;
+                        });
+                        showRatingChangedDialog(context);
+                      }
                   },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF02458A),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: EdgeInsets.all(15),
-                    child: Icon(
-                      Icons.info,
-                      color: Colors.white,
-                    ),
-                  ),
+                  icon: Icon(Icons.thumb_up),
+                  color: isLiked ? Color(0xFF02458A) : Colors.grey,
+                  iconSize: 56.0,
                 ),
-                SizedBox(width: 7),
-                InkWell(
-                  onTap: () {
-                    // Lógica para exibir pontos de interesse
+                SizedBox(width: 16.0),
+                IconButton(
+                  onPressed: () {
+                    if(isLiked) {
+                      setState(() {
+                        changeLocationGradeFunction(location.id, 2);
+                        incrementeDislikes(location.id, true);
+                        isLiked = false;
+                      });
+                      showRatingChangedDialog(context);
+                    }
                   },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF02458A),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: EdgeInsets.all(15),
-                    child: Icon(
-                      Icons.location_on_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
+                  color: !isLiked ? Color(0xFF02458A) : Colors.grey,
+                  icon: Icon(Icons.thumb_down),
+                  iconSize: 56.0,
                 ),
               ],
             ),
-          ),
-          Divider(),
-          Padding(
-            padding: EdgeInsets.all(20.0),
+          ): Padding(
+            padding: EdgeInsets.all(8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                    hint: Text('Rate Location'),
-                    value: selectedValue,
-                    onChanged: (newValue) {
-                      nValue = newValue;
-                    },
-                    items: List.generate(5, (index) {
-                      return DropdownMenuItem<int>(
-                        value: index + 1,
-                        child:
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text((index + 1).toString()),
-                            const Icon(Icons.star, color: Colors.amber),
-                          ],
-                        ),
-
-                      );
-                    }),
-                  ),
-                ),
                 IconButton(
-                  icon: Icon(Icons.send),
                   onPressed: () {
-                    if (nValue != null) {
-                      changeLocationGradeFunction(location.id,nValue!); //salva no search-preferences
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Rating saved!'),
-                              content: Text('Your rating has been saved successfully.'),
-                              backgroundColor: Colors.green,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('OK'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Error'),
-                            content: Text('Error saving your rating'),
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
+                    setState(() {
+                      changeLocationGradeFunction(location.id, 1);
+                      incrementeLikes(location.id, false);
+                      isLiked = true;
+                    });
+                    showRatingChangedDialog(context);
                   },
+                  icon: Icon(Icons.thumb_up),
+                  iconSize: 56.0,
+                ),
+                SizedBox(width: 16.0),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      changeLocationGradeFunction(location.id, 2);
+                      incrementeDislikes(location.id, false);
+                      isLiked = false;
+                    });
+                    showRatingChangedDialog(context);
+                  },
+                  icon: Icon(Icons.thumb_down),
+                  iconSize: 56.0,
                 ),
               ],
             ),
@@ -194,9 +194,9 @@ class LocationDetailPage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: ListView(
-                padding: EdgeInsets.zero, // Remova o padding do ListView
+                padding: EdgeInsets.zero,
                 children: [
-                  SizedBox(height: 20), // Espaçamento do topo
+                  SizedBox(height: 20),
                   const Text(
                     'Description:',
                     style: TextStyle(
@@ -216,17 +216,16 @@ class LocationDetailPage extends StatelessWidget {
           ),
         ],
       ),
-
       bottomNavigationBar: Container(
         margin: const EdgeInsets.only(top: 10),
-        color: Colors.white, // Cor de fundo do footer
+        color: Colors.white,
         padding: EdgeInsets.all(16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Created by: ${location.createdBy!}",
-              style:const TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
@@ -237,4 +236,25 @@ class LocationDetailPage extends StatelessWidget {
       ),
     );
   }
+}
+
+void showRatingChangedDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Rate changed!'),
+        content: Text('Rate changed with success'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
 }

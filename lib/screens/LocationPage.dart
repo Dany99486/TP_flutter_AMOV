@@ -18,6 +18,8 @@ class _LocationPageState extends State<LocationPage> {
   bool orderByAlphabetic = false;
   Map<String, dynamic>? allSharedPreferences;
 
+
+
   Future<Map<String, dynamic>> loadAllSharedPreferences() async {
     var prefs = await SharedPreferences.getInstance();
     return prefs.getKeys().fold<Map<String, dynamic>>(
@@ -68,12 +70,12 @@ class _LocationPageState extends State<LocationPage> {
         final locations = await readLocationsFromFirebase();
         yield locations;
         await Future.delayed(Duration(
-            seconds: 5)); // Espera 5 segundos antes de buscar novamente
+            seconds: 5));
       } catch (e) {
         print('Error fetching locations: $e');
-        yield <Location>[]; // Retorna uma lista vazia em caso de erro
+        yield <Location>[];
         await Future.delayed(
-            Duration(seconds: 5)); // Tentará novamente após 5 segundos
+            Duration(seconds: 5));
       }
     }
   }
@@ -188,17 +190,6 @@ class _LocationPageState extends State<LocationPage> {
                                 Expanded(
                                   child: Text(snapshot.data![index].name),
                                 ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      '${snapshot.data![index].grade}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Icon(Icons.star, color: Colors.amber),
-                                  ],
-                                ),
                                 Spacer(),
                                 IconButton(
                                   icon: Icon(Icons.more_vert),
@@ -212,6 +203,12 @@ class _LocationPageState extends State<LocationPage> {
                                           'initialLocationGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1
                                         }
                                     );
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.location_on),
+                                  onPressed: () {
+
                                   },
                                 ),
                               ],
