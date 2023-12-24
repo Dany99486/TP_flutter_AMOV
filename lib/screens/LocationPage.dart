@@ -222,7 +222,7 @@ class _LocationPageState extends State<LocationPage> {
                                         arguments: {
                                           'location': snapshot.data![index],
                                           'changeLocationGradeFunction': setSharedPreferences,
-                                          'initialLocationGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1
+                                          'initialLocationGradeValue': allSharedPreferences
                                         }
                                     );
                                   },

@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Location.dart';
 import '../models/POI.dart';
+import 'POIDetails.dart';
 
 
 class POIPage extends StatefulWidget {
+  const POIPage({super.key, required this.title});
   static const String routeName = '/POIPage';
-  static const String title = 'Points of Interest';
+  final String title;
 
   @override
   _PoiPageState createState() => _PoiPageState();
@@ -18,6 +21,8 @@ class _PoiPageState extends State<POIPage> {
   bool orderByDistance = false;
   bool orderByAlphabetic = false;
   Map<String, dynamic>? allSharedPreferences;
+
+
 
 
   Future<List<POI>> readPoiFromFirebase(String docName) async {
@@ -75,6 +80,8 @@ class _PoiPageState extends State<POIPage> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Location location = args['location'];
+    final Function(String, int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
+    allSharedPreferences = args['initialLocationGradeValue'];
 
     return Scaffold(
       appBar: AppBar(
@@ -155,15 +162,16 @@ class _PoiPageState extends State<POIPage> {
                               IconButton(
                                 icon: Icon(Icons.more_vert),
                                 onPressed: () {
-                                  /*Navigator.pushNamed(
+                                  Navigator.pushNamed(
                                       context,
-                                      LocationDetailPage.routeName,
+                                      POIDetailPage.routeName,
                                       arguments: {
-                                        'location': snapshot.data![index],
-                                        'changeLocationGradeFunction': setSharedPreferences,
-                                        'initialLocationGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1
+                                        'location': location,
+                                        'poi': snapshot.data![index],
+                                        'changePoiGradeFunction': changeLocationGradeFunction,
+                                        'initialPoiGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1
                                       }
-                                  );*/
+                                  );
                                 },
                               ),
 
