@@ -5,6 +5,7 @@ import '../firebase_options.dart';
 import '../models/Location.dart';
 import 'LocationDetails.dart';
 import 'LocationPage.dart';
+import 'POIPage.dart';
 
 void initFirebase() async {
   await Firebase.initializeApp(
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
       routes: {
         LocationPage.routeName : (context) => const LocationPage(title: 'Locations'),
         LocationDetailPage.routeName: (context) =>  LocationDetailPage(),
+        POIPage.routeName: (context) => POIPage(),
       },
     );
   }

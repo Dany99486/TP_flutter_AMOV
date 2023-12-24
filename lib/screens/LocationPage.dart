@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tp_flutter/screens/POIPage.dart';
 import '../models/Location.dart';
 import 'LocationDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,6 +40,10 @@ class _LocationPageState extends State<LocationPage> {
     });
   }
 
+  /*int getDistance(Location location) {
+    var _locationData =  location.getLocation();
+    return 0;
+  }*/
 
   void setSharedPreferences(String key, dynamic value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -179,6 +184,9 @@ class _LocationPageState extends State<LocationPage> {
                   if (orderByAlphabetic) {
                     snapshot.data!.sort((a, b) => a.name.compareTo(b.name));
                   }
+                  /*else if (orderByDistance) {
+                    snapshot.data!.sort((a, b) => getDistance(a)-getDistance(b) );
+                  }*/
                   return Expanded(
                     child: ListView.builder(
                       itemCount: snapshot.data!.length,
@@ -208,7 +216,15 @@ class _LocationPageState extends State<LocationPage> {
                                 IconButton(
                                   icon: Icon(Icons.location_on),
                                   onPressed: () {
-
+                                    Navigator.pushNamed(
+                                        context,
+                                        POIPage.routeName,
+                                        arguments: {
+                                          'location': snapshot.data![index],
+                                          'changeLocationGradeFunction': setSharedPreferences,
+                                          'initialLocationGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1
+                                        }
+                                    );
                                   },
                                 ),
                               ],
