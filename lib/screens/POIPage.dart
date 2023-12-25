@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/Location.dart';
+import '../models/Local.dart';
 import '../models/POI.dart';
 import 'POIDetails.dart';
 
@@ -121,7 +121,7 @@ class _PoiPageState extends State<POIPage> {
   @override
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    Location location = args['location'];
+    Local location = args['location'];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF02458A),

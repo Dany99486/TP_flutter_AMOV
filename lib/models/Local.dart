@@ -1,4 +1,4 @@
-class Location {
+class Local {
   String id;
   String name;
   double? latitude;
@@ -10,7 +10,7 @@ class Location {
   double? grade;
   String? category;
 
-  Location(
+  Local(
       this.id,
       this.name,
       this.latitude,

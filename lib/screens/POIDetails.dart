@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../models/Location.dart';
+import '../models/Local.dart';
 import '../models/POI.dart';
 
 class POIDetailPage extends StatefulWidget {
@@ -79,7 +79,7 @@ class _POIDetailPageState extends State<POIDetailPage> {
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     POI location = args['poi'];
-    Location locationParent = args['location'];
+    Local locationParent = args['location'];
     Function(String, int) changeLocationGradeFunction = args['changePoiGradeFunction'];
     dynamic initialLocationGradeValue = args['initialPoiGradeValue'];
 

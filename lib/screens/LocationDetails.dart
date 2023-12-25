@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../models/Location.dart';
+import '../models/Local.dart';
 
 class LocationDetailPage extends StatefulWidget {
   static const String routeName = '/locationDetail';
@@ -76,7 +76,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
   @override
   Widget build(BuildContext context) {
     var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    Location location = args['location'];
+    Local location = args['location'];
     Function(String, int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
     dynamic initialLocationGradeValue = args['initialLocationGradeValue'];
     if(initialLocationGradeValue == 1) {
