@@ -5,11 +5,9 @@ class POI{
   double? longitude;
   String? description;
   String? photoUrl;
-  List<String>? reportedBy;
   int? likes;
   int? dislikes;
   String? createdBy;
-  int? report;
   double? grade;
   String? category;
   String? locationId;
@@ -21,11 +19,9 @@ class POI{
       this.longitude,
       this.description,
       this.photoUrl,
-      this.reportedBy,
       this.likes,
       this.dislikes,
       this.createdBy,
-      this.report,
       this.grade,
       this.category,
       this.locationId

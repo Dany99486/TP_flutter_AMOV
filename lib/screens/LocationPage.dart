@@ -20,7 +20,6 @@ class _LocationPageState extends State<LocationPage> {
   Map<String, dynamic>? allSharedPreferences;
 
 
-
   Future<Map<String, dynamic>> loadAllSharedPreferences() async {
     var prefs = await SharedPreferences.getInstance();
     return prefs.getKeys().fold<Map<String, dynamic>>(
@@ -31,7 +30,6 @@ class _LocationPageState extends State<LocationPage> {
         }
     );
   }
-
 
   Future<void> loadSharedPreferences() async {
     Map<String, dynamic> sharedPreferences = await loadAllSharedPreferences();
@@ -221,8 +219,6 @@ class _LocationPageState extends State<LocationPage> {
                                         POIPage.routeName,
                                         arguments: {
                                           'location': snapshot.data![index],
-                                          'changeLocationGradeFunction': setSharedPreferences,
-                                          'initialLocationGradeValue': allSharedPreferences
                                         }
                                     );
                                   },

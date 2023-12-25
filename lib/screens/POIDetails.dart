@@ -20,11 +20,9 @@ class _POIDetailPageState extends State<POIDetailPage> {
   void incrementeLikes(String locationParent,String docName, bool dec) async {
     var db = FirebaseFirestore.instance;
 
-    print("fcwa");
     var document = db.collection('locations').doc(locationParent).collection('pointsOfInterest').doc(docName);
     var data = await document.get(const GetOptions(source: Source.server));
     if (data.exists) {
-      print("aquiiiiiiiiiiiiiiiiiiiiiiii\n\n");
       var values = data['likes'] + 1;
       document.update({'likes': values}).then(
               (res) => setState(() { _error = null; }),
@@ -79,22 +77,17 @@ class _POIDetailPageState extends State<POIDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final POI location = args['poi'];
-    final Location locationParent = args['location'];
-
-    final Function(String, int) changeLocationGradeFunction = args['changePoiGradeFunction'];
+    var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    POI location = args['poi'];
+    Location locationParent = args['location'];
+    Function(String, int) changeLocationGradeFunction = args['changePoiGradeFunction'];
     dynamic initialLocationGradeValue = args['initialPoiGradeValue'];
-    print("location id: " + location.id+ " locationParent id: " + locationParent.id);
 
     if(initialLocationGradeValue == 1) {
-      print("simmmmmmmmmmmmmmmmmmmmmmmmm");
       isLiked = true;
     } else if(initialLocationGradeValue == 2) {
-      print("naoooooooooooooooooooooooooooo");
       isLiked = false;
     }
-    print("wtffffffffffffffffffffffff-"+initialLocationGradeValue.toString());
     final storage = FirebaseStorage.instance;
     Reference ref = storage.ref().child(location.photoUrl!);
 

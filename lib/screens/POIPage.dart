@@ -19,11 +19,55 @@ class POIPage extends StatefulWidget {
 class _PoiPageState extends State<POIPage> {
   late Stream<List<POI>> PoiStream;
   bool orderByDistance = false;
-  bool orderByAlphabetic = false;
   Map<String, dynamic>? allSharedPreferences;
+  bool orderByAlphabetic = false;
+
+  Future<Map<String, dynamic>> loadAllSharedPreferences() async {
+    var prefs = await SharedPreferences.getInstance();
+    return prefs.getKeys().fold<Map<String, dynamic>>(
+        {},
+            (Map<String, dynamic> accumulator, String key) {
+          accumulator[key] = prefs.get(key);
+          return accumulator;
+        }
+    );
+  }
 
 
+  Future<void> loadSharedPreferences() async {
+    Map<String, dynamic> sharedPreferences = await loadAllSharedPreferences();
+    setState(() {
+      allSharedPreferences = sharedPreferences;
+    });
+  }
 
+  /*int getDistance(Location location) {
+    var _locationData =  location.getLocation();
+    return 0;
+  }*/
+
+  void setSharedPreferences(String key, dynamic value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (value is String) {
+
+      await prefs.setString(key, value);
+      allSharedPreferences?.clear();
+      loadSharedPreferences();
+
+    } else if (value is int) {
+
+      await prefs.setInt(key, value);
+      allSharedPreferences?.clear();
+      loadSharedPreferences();
+
+    }
+  }
+
+  void initState() {
+    super.initState();
+    loadSharedPreferences();
+  }
 
   Future<List<POI>> readPoiFromFirebase(String docName) async {
     List<POI> response = [];
@@ -42,11 +86,9 @@ class _PoiPageState extends State<POIPage> {
           (document.get('longitude') ?? 0.0).toDouble(),
           document.get('description') ?? '',
           document.get('photoUrl') ?? '',
-          List<String>.from(document.get('reportedBy') ?? []),
           (document.get('likes') ?? 0).toInt(),
           (document.get('dislikes') ?? 0).toInt(),
           document.get('createdBy') ?? '',
-          (document.get('report') ?? 0).toInt(),
           (document.get('grade') ?? 0.0).toDouble(),
           document.get('category') ?? '',
           document.get('locationId') ?? '',
@@ -78,11 +120,8 @@ class _PoiPageState extends State<POIPage> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final Location location = args['location'];
-    final Function(String, int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
-    allSharedPreferences = args['initialLocationGradeValue'];
-
+    var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    Location location = args['location'];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF02458A),
@@ -168,8 +207,8 @@ class _PoiPageState extends State<POIPage> {
                                       arguments: {
                                         'location': location,
                                         'poi': snapshot.data![index],
-                                        'changePoiGradeFunction': changeLocationGradeFunction,
-                                        'initialPoiGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1
+                                        'changePoiGradeFunction': setSharedPreferences,
+                                        'initialPoiGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1,
                                       }
                                   );
                                 },

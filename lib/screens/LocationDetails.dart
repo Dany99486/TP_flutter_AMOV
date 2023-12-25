@@ -75,9 +75,9 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final Location location = args['location'];
-    final Function(String, int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
+    var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    Location location = args['location'];
+    Function(String, int) changeLocationGradeFunction = args['changeLocationGradeFunction'];
     dynamic initialLocationGradeValue = args['initialLocationGradeValue'];
     if(initialLocationGradeValue == 1) {
       isLiked = true;
