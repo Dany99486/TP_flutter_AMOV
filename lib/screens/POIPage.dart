@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/Local.dart';
 import '../models/POI.dart';
@@ -22,6 +26,16 @@ class _PoiPageState extends State<POIPage> {
   Map<String, dynamic>? allSharedPreferences;
   bool orderByAlphabetic = false;
 
+  StreamSubscription<LocationData>? _locationSubscription;
+
+  Location location = Location();
+  bool _serviceEnabled = false;
+  PermissionStatus _permissionGranted = PermissionStatus.denied;
+  LocationData _locationData = LocationData.fromMap({
+    "latitude": 40.192639,
+    "longitude": -8.411899,
+  });
+
   Future<Map<String, dynamic>> loadAllSharedPreferences() async {
     var prefs = await SharedPreferences.getInstance();
     return prefs.getKeys().fold<Map<String, dynamic>>(
@@ -39,6 +53,31 @@ class _PoiPageState extends State<POIPage> {
     setState(() {
       allSharedPreferences = sharedPreferences;
     });
+  }
+
+  void getLocation() async {
+    _locationSubscription=location.onLocationChanged.listen((LocationData currentLocation) {
+      setState(() {_locationData = currentLocation;});
+    });
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    _locationData = await location.getLocation();
+    setState(() {});
+    _locationSubscription?.cancel();
+    _locationSubscription=null;
   }
 
   /*int getDistance(Location location) {
@@ -158,6 +197,7 @@ class _PoiPageState extends State<POIPage> {
                   onChanged: (value) {
                     setState(() {
                       orderByDistance = value!;
+                      if(orderByDistance) { getLocation(); }
                     });
                   },
                 ),
@@ -186,6 +226,11 @@ class _PoiPageState extends State<POIPage> {
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               } else {
+                if (orderByAlphabetic) {
+                  snapshot.data!.sort((a, b) => a.name.compareTo(b.name));
+                } else if (orderByDistance){
+                  snapshot.data!.sort((a, b) => getDistance(a).compareTo(getDistance(b)));
+                }
                 return Expanded(
                   child: ListView.builder(
                     itemCount: snapshot.data!.length,
@@ -228,5 +273,14 @@ class _PoiPageState extends State<POIPage> {
         ],
       ),
     );
+  }
+  double getDistance(POI local){
+    //getLocation();
+    double latitude=_locationData.latitude!;
+    double longitude=_locationData.longitude!;
+    double x=(latitude-local.latitude!).abs();
+    double y =(longitude-local.longitude!).abs();
+    print(sqrt(x*x+y+y));
+    return sqrt(x*x+y+y);
   }
 }
