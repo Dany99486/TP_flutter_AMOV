@@ -9,6 +9,8 @@ class Local {
   int? votes;
   double? grade;
   String? category;
+  int? likes;
+  int? dislikes;
 
   Local(
       this.id,
@@ -21,5 +23,7 @@ class Local {
       this.votes,
       this.grade,
       this.category,
+      this.likes,
+      this.dislikes
       );
 }

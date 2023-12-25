@@ -139,6 +139,8 @@ class _LocationPageState extends State<LocationPage> {
           (document.get('votes') ?? 0).toInt(),
           (document.get('grade') ?? 0.0).toDouble(),
           document.get('category') ?? '',
+          (document.get('likes') ?? 0).toInt(),
+          (document.get('dislikes') ?? 0).toInt(),
         );
         response.add(location);
       });

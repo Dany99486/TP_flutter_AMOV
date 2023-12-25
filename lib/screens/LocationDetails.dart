@@ -148,6 +148,12 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                   iconSize: 56.0,
                 ),
                 SizedBox(width: 16.0),
+                Column(
+                  children: [
+                    Text('Likes: ${location.likes}   ', style: TextStyle(fontSize: 16)),
+                    Text('Dislikes: ${location.dislikes}   ', style: TextStyle(fontSize: 16)),
+                  ],
+                ),
                 IconButton(
                   onPressed: () {
                     if(isLiked) {
@@ -165,6 +171,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                 ),
               ],
             ),
+
           ): Padding(
             padding: EdgeInsets.all(8.0),
             child: Row(
@@ -172,17 +179,26 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
               children: [
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      changeLocationGradeFunction(location.id, 1);
-                      incrementeLikes(location.id, false);
-                      isLiked = true;
-                    });
-                    showRatingChangedDialog(context);
+                    if (!isLiked) {
+                      setState(() {
+                        changeLocationGradeFunction(location.id, 1);
+                        incrementeLikes(location.id, true);
+                        isLiked = true;
+                      });
+                      showRatingChangedDialog(context);
+                    }
                   },
                   icon: Icon(Icons.thumb_up),
+                  color: isLiked ? Color(0xFF02458A) : Colors.grey,
                   iconSize: 56.0,
                 ),
                 SizedBox(width: 16.0),
+                Column(
+                  children: [
+                    Text('Likes: ${location.likes}', style: TextStyle(fontSize: 16)),
+                    Text('Dislikes: ${location.dislikes}', style: TextStyle(fontSize: 16)),
+                  ],
+                ),
                 IconButton(
                   onPressed: () {
                     setState(() {
