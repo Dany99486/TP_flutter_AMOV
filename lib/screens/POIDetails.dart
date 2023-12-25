@@ -153,6 +153,12 @@ class _POIDetailPageState extends State<POIDetailPage> {
                   iconSize: 56.0,
                 ),
                 SizedBox(width: 16.0),
+                Column(
+                  children: [
+                    Text('Likes: ${location.likes}   ', style: TextStyle(fontSize: 16)),
+                    Text('Dislikes: ${location.dislikes}   ', style: TextStyle(fontSize: 16)),
+                  ],
+                ),
                 IconButton(
                   onPressed: () {
                     if(isLiked) {
@@ -188,7 +194,12 @@ class _POIDetailPageState extends State<POIDetailPage> {
                   iconSize: 56.0,
                 ),
                 SizedBox(width: 16.0),
-                IconButton(
+                Column(
+                  children: [
+                    Text('Likes: ${location.likes}   ', style: TextStyle(fontSize: 16)),
+                    Text('Dislikes: ${location.dislikes}   ', style: TextStyle(fontSize: 16)),
+                  ],
+                ),                IconButton(
                   onPressed: () {
                     setState(() {
                       changeLocationGradeFunction(location.id, 2);
