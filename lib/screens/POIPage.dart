@@ -22,7 +22,7 @@ class POIPage extends StatefulWidget {
 
 class _PoiPageState extends State<POIPage> {
   late Stream<List<POI>> PoiStream;
-  bool orderByDistance = false;
+  bool orderByDistance = false, orderByCategory = false;
   Map<String, dynamic>? allSharedPreferences;
   bool orderByAlphabetic = false;
 
@@ -213,7 +213,22 @@ class _PoiPageState extends State<POIPage> {
                   },
                 ),
               ),
+
             ],
+          ),
+          Row(children: [
+            Expanded(
+              child: CheckboxListTile(
+                title: Text('Category'),
+                value: orderByCategory,
+                onChanged: (value) {
+                  setState(() {
+                    orderByCategory = value!;
+                  });
+                }
+              ),
+            ),
+          Spacer()]
           ),
           Divider(), // Adiciona um Divider abaixo da Row
           StreamBuilder<List<POI>>(
@@ -230,6 +245,8 @@ class _PoiPageState extends State<POIPage> {
                   snapshot.data!.sort((a, b) => a.name.compareTo(b.name));
                 } else if (orderByDistance){
                   snapshot.data!.sort((a, b) => getDistance(a).compareTo(getDistance(b)));
+                } else if(orderByCategory){
+                  snapshot.data!.sort((a, b) => a.category!.compareTo(b.category!));
                 }
                 return Expanded(
                   child: ListView.builder(
