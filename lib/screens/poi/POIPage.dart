@@ -4,11 +4,13 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/Local.dart';
 import '../../models/POI.dart';
+import '../../models/Categories.dart';
 import '../HistoryPage.dart';
 import 'POIDetails.dart';
 
@@ -25,6 +27,7 @@ class POIPage extends StatefulWidget {
 class _PoiPageState extends State<POIPage> {
   late Stream<List<POI>> PoiStream;
   bool orderByDistance = false, orderByCategory = false;
+  String selectedCategory = '';
   Map<String, dynamic>? allSharedPreferences;
   late List<POI> historyList = [];
   bool orderByAlphabetic = false;
@@ -209,6 +212,46 @@ class _PoiPageState extends State<POIPage> {
       }
     }
   }
+  Stream<List<Categories>> getCategoriesStream() async* {
+    while (true) {
+      try {
+        final locations = await readCategoriesFromFirebase();
+        yield locations;
+        await Future.delayed(Duration(
+            seconds: 5));
+      } catch (e) {
+        print('Error fetching locations: $e');
+        yield <Categories>[];
+        await Future.delayed(
+            Duration(seconds: 5));
+      }
+    }
+  }
+
+  Future<List<Categories>> readCategoriesFromFirebase() async {
+    List<Categories> response = [];
+    QuerySnapshot querySnapshot;
+    var db = FirebaseFirestore.instance;
+
+    try {
+      querySnapshot = await db.collection('category').get();
+
+      querySnapshot.docs.forEach((document) {
+        Categories location = Categories(
+          document.get('id') ?? '',
+          document.get('name') ?? '',
+          document.get('description') ?? '',
+          document.get('iconUrl') ?? '',
+          document.get('createdBy') ?? '',
+        );
+        response.add(location);
+      });
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Error fetching locations');
+    }
+    return response;
+  }
 
 
   @override
@@ -277,16 +320,56 @@ class _PoiPageState extends State<POIPage> {
           Row(children: [
             Expanded(
               child: CheckboxListTile(
-                title: Text('Category'),
-                value: orderByCategory,
-                onChanged: (value) {
-                  setState(() {
-                    orderByCategory = value!;
-                  });
-                }
+                  title: Text('Category'),
+                  value: orderByCategory,
+                  onChanged: (value) {
+                    setState(() {
+                      orderByCategory = value!;
+                    });
+                  }
               ),
             ),
-          Spacer()]
+            /*Expanded(
+              child: StreamBuilder<List<Categories>>(
+                stream: getCategoriesStream(),
+                builder: (context, snapshot) {
+
+
+
+                  List<Categories> categories = snapshot.data!;
+
+                  // Assuming Categories has an 'id' field, adjust this accordingly
+                  Set<String> uniqueCategoryNames =
+                  categories.map((category) => category.name).toSet();
+
+                  List<DropdownMenuItem<String>> dropdownItems = uniqueCategoryNames
+                      .map((categoryName) => DropdownMenuItem<String>(
+                    value: categoryName,
+                    child: Text(categoryName),
+                  ))
+                      .toList();
+
+                  return Container(
+                      // or SizedBox, adjust height as needed
+                      height: 50,
+                      child: DropdownButton<String>(
+                      value: selectedCategory,
+                      onChanged: (String? newValue) {
+                    setState(() {
+                      selectedCategory = newValue!;
+                    });
+                  },
+                  items: dropdownItems,
+                  hint: const Text('Select Category'),
+                  ),
+                  );
+                },
+              ),
+            ),*/
+
+
+
+          ],
           ),
           Divider(), // Adiciona um Divider abaixo da Row
           StreamBuilder<List<POI>>(
