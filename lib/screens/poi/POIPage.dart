@@ -6,8 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/Local.dart';
-import '../models/POI.dart';
+import '../../models/Local.dart';
+import '../../models/POI.dart';
 import 'POIDetails.dart';
 
 
@@ -162,6 +162,7 @@ class _PoiPageState extends State<POIPage> {
     var args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     Local location = args['location'];
     return Scaffold(
+
       appBar: AppBar(
         backgroundColor: Color(0xFF02458A),
         title: Text(
@@ -235,11 +236,28 @@ class _PoiPageState extends State<POIPage> {
             stream: getPoiStream(location.id),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
+
                 return const Center(child: CircularProgressIndicator());
+
               } else if (snapshot.hasError) {
+
                 return Center(child: Text('Error: ${snapshot.error}'));
+
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
+
+                  return AlertDialog(
+                    title: const Text('No Point Of Interest'),
+                    content: const Text('There are no Points Of Interest to this location.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Back'),
+                      ),
+                    ],
+                  );
+
               } else {
                 if (orderByAlphabetic) {
                   snapshot.data!.sort((a, b) => a.name.compareTo(b.name));
@@ -277,6 +295,29 @@ class _PoiPageState extends State<POIPage> {
                               ),
 
                             ],
+                          ),
+                          subtitle: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.0), // Adicionando padding ao Divider
+                                  child: Divider(), // Divider entre o title e o subtitle
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.thumb_up),
+                                    SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                    Text("${snapshot.data![index].likes}"),
+                                    Spacer(),
+                                    Icon(Icons.thumb_down),
+                                    SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                    Text("${snapshot.data![index].dislikes}"),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

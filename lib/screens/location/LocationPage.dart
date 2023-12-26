@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tp_flutter/screens/POIPage.dart';
-import '../models/Local.dart';
+import 'package:tp_flutter/screens/poi/POIPage.dart';
+import '../../models/Local.dart';
 import 'package:location/location.dart';
 import 'LocationDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -233,7 +233,7 @@ class _LocationPageState extends State<LocationPage> {
                             title: Row(
                               children: [
                                 Expanded(
-                                  child: Text(snapshot.data![index].name),
+                                  child:  Text(snapshot.data![index].name),
                                 ),
                                 Spacer(),
                                 IconButton(
@@ -263,6 +263,29 @@ class _LocationPageState extends State<LocationPage> {
                                   },
                                 ),
                               ],
+                            ),
+                            subtitle: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 10.0), // Adicionando padding ao Divider
+                                    child: Divider(), // Divider entre o title e o subtitle
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.thumb_up),
+                                      SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                      Text("${snapshot.data![index].likes}"),
+                                      Spacer(),
+                                      Icon(Icons.thumb_down),
+                                      SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                      Text("${snapshot.data![index].dislikes}"),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         );

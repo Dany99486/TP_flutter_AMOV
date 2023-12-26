@@ -3,10 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firebase_options.dart';
 import '../models/Local.dart';
-import 'LocationDetails.dart';
-import 'LocationPage.dart';
-import 'POIDetails.dart';
-import 'POIPage.dart';
+import 'location/LocationDetails.dart';
+import 'location/LocationPage.dart';
+import 'poi/POIDetails.dart';
+import 'poi/POIPage.dart';
 
 void initFirebase() async {
   await Firebase.initializeApp(
