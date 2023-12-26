@@ -49,15 +49,6 @@ class _HistoryPageState extends State<HistoryPage> {
       historyList = decodedHistory.map((poiMap) => POI.fromJson(poiMap)).toList();
     }
   }
-  void deleteHistory() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('history');
-    setState(() {
-      historyList = [];
-    });
-    _historyStreamController.add([]); // Adicione essa linha para notificar a StreamBuilder
-
-  }
 
 
 
@@ -71,12 +62,7 @@ class _HistoryPageState extends State<HistoryPage> {
           style: TextStyle(color: Colors.white),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.delete, color: Colors.white),
-            onPressed: () {
-              deleteHistory();
-            },
-          ),
+
         ],
       ),
       body: Column(
@@ -107,21 +93,21 @@ class _HistoryPageState extends State<HistoryPage> {
                                 child: Text(snapshot.data![index].name),
                               ),
                               Spacer(),
-                              /*IconButton(
+                              IconButton(
                                 icon: Icon(Icons.more_vert),
                                 onPressed: () {
                                   Navigator.pushNamed(
                                       context,
                                       POIDetailPage.routeName,
-                                      *//*arguments: {
+                                      /*arguments: {
                                         'location': location,
                                         'poi': snapshot.data![index],
                                         'changePoiGradeFunction': setSharedPreferences,
                                         'initialPoiGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1,
-                                      }*//*
+                                      }*/
                                   );
                                 },
-                              ),*/
+                              ),
 
                             ],
                           ),
