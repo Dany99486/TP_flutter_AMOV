@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tp_flutter/screens/poi/POIPage.dart';
 import '../../models/Local.dart';
 import 'package:location/location.dart';
+import '../HistoryPage.dart';
 import 'LocationDetails.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -164,8 +165,10 @@ class _LocationPageState extends State<LocationPage> {
           IconButton(
             icon: Icon(Icons.history, color: Colors.white),
             onPressed: () {
-              // Vai para a página de consultar últimas 10 pesquisas
-            },
+              Navigator.pushNamed(
+                context,
+                HistoryPage.routeName,
+              );            },
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/Local.dart';
 import '../../models/POI.dart';
+import '../HistoryPage.dart';
 import 'POIDetails.dart';
 
 
@@ -24,6 +26,7 @@ class _PoiPageState extends State<POIPage> {
   late Stream<List<POI>> PoiStream;
   bool orderByDistance = false, orderByCategory = false;
   Map<String, dynamic>? allSharedPreferences;
+  late List<POI> historyList = [];
   bool orderByAlphabetic = false;
 
   StreamSubscription<LocationData>? _locationSubscription;
@@ -36,6 +39,55 @@ class _PoiPageState extends State<POIPage> {
     "longitude": -8.411899,
   });
 
+
+
+  Future<void> loadHistory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? historyJson = prefs.getString('history');
+    print('History List: $historyJson');
+
+    if (historyJson != null) {
+      // Decode the JSON string into a List<Map<String, dynamic>>
+      List<Map<String, dynamic>> decodedHistory = (json.decode(historyJson) as List<dynamic>).cast<Map<String, dynamic>>();
+      // Convert each map into a POI object
+      historyList = decodedHistory.map((poiMap) => POI.fromJson(poiMap)).toList();
+    }
+  }
+
+
+  Future<void> saveToHistory(POI poi) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Get the existing history string or use an empty string if not present
+    String? existingHistory = prefs.getString('history');
+    List<Map<String, dynamic>> historyList;
+
+    if (existingHistory != null) {
+      // Decode the existing JSON string into a list of maps
+      List<dynamic> decodedHistory = json.decode(existingHistory);
+      historyList = decodedHistory.cast<Map<String, dynamic>>().toList();
+    } else {
+      historyList = [];
+    }
+    for (var i = 0; i < historyList.length; i++) {
+      if (historyList[i]['id'] == poi.id) {
+        return;
+      }
+    }
+    // Add the new POI as a map
+    historyList.insert(0, poi.toJson());
+
+    // Limit the list to 10 items
+    if (historyList.length > 10) {
+      historyList = historyList.sublist(0, 10);
+    }
+
+    // Encode the entire list back to a JSON string
+    String encodedHistory = json.encode(historyList);
+
+    // Save the encoded list to SharedPreferences
+    prefs.setString('history', encodedHistory);
+  }
   Future<Map<String, dynamic>> loadAllSharedPreferences() async {
     var prefs = await SharedPreferences.getInstance();
     return prefs.getKeys().fold<Map<String, dynamic>>(
@@ -106,6 +158,8 @@ class _PoiPageState extends State<POIPage> {
   void initState() {
     super.initState();
     loadSharedPreferences();
+    loadHistory();
+
   }
 
   Future<List<POI>> readPoiFromFirebase(String docName) async {
@@ -173,7 +227,10 @@ class _PoiPageState extends State<POIPage> {
           IconButton(
             icon: Icon(Icons.history, color: Colors.white),
             onPressed: () {
-              // Vai para a página de consultar últimas 10 pesquisas
+              Navigator.pushNamed(
+                context,
+                HistoryPage.routeName,
+              );
             },
           ),
         ],
@@ -281,6 +338,7 @@ class _PoiPageState extends State<POIPage> {
                               IconButton(
                                 icon: Icon(Icons.more_vert),
                                 onPressed: () {
+                                  saveToHistory(snapshot.data![index]);
                                   Navigator.pushNamed(
                                       context,
                                       POIDetailPage.routeName,

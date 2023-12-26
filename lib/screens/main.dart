@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firebase_options.dart';
 import '../models/Local.dart';
+import 'HistoryPage.dart';
 import 'location/LocationDetails.dart';
 import 'location/LocationPage.dart';
 import 'poi/POIDetails.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         LocationDetailPage.routeName: (context) =>  LocationDetailPage(),
         POIPage.routeName: (context) => const POIPage(title: 'Points of Interest',),
         POIDetailPage.routeName: (context) => POIDetailPage(),
+        HistoryPage.routeName: (context) => const HistoryPage(title: 'POI History'),
       },
     );
   }
