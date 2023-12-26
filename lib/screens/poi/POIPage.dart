@@ -27,7 +27,7 @@ class POIPage extends StatefulWidget {
 class _PoiPageState extends State<POIPage> {
   late Stream<List<POI>> PoiStream;
   bool orderByDistance = false, orderByCategory = false;
-  String selectedCategory = '';
+  String? selectedCategory;
   Map<String, dynamic>? allSharedPreferences;
   late List<POI> historyList = [];
   bool orderByAlphabetic = false;
@@ -317,6 +317,9 @@ class _PoiPageState extends State<POIPage> {
 
             ],
           ),
+
+
+
           Row(children: [
             Expanded(
               child: CheckboxListTile(
@@ -328,44 +331,48 @@ class _PoiPageState extends State<POIPage> {
                     });
                   }
               ),
+
             ),
-            /*Expanded(
-              child: StreamBuilder<List<Categories>>(
-                stream: getCategoriesStream(),
-                builder: (context, snapshot) {
+            StreamBuilder<List<Categories>>(
+              stream: getCategoriesStream(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data == null) {
+                  // Handle the case where data is not available yet
+                  return CircularProgressIndicator(); // ou algum outro indicador de carregamento
+                }
 
+                List<Categories> categories = snapshot.data!;
+                print("Categories:");
+                for (var i = 0; i < categories.length; i++) {
+                  print(categories[i].name);
+                }
 
-
-                  List<Categories> categories = snapshot.data!;
-
-                  // Assuming Categories has an 'id' field, adjust this accordingly
-                  Set<String> uniqueCategoryNames =
-                  categories.map((category) => category.name).toSet();
-
-                  List<DropdownMenuItem<String>> dropdownItems = uniqueCategoryNames
-                      .map((categoryName) => DropdownMenuItem<String>(
-                    value: categoryName,
-                    child: Text(categoryName),
-                  ))
-                      .toList();
-
-                  return Container(
-                      // or SizedBox, adjust height as needed
-                      height: 50,
-                      child: DropdownButton<String>(
-                      value: selectedCategory,
-                      onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCategory = newValue!;
-                    });
-                  },
-                  items: dropdownItems,
-                  hint: const Text('Select Category'),
+                List<DropdownMenuItem<String>> dropdownItems = categories.map(
+                      (Categories category) => DropdownMenuItem<String>(
+                    value: category.name,
+                    child: Text(category.name),
                   ),
-                  );
-                },
-              ),
-            ),*/
+                ).toList();
+                dropdownItems.insert(0,DropdownMenuItem<String>(
+                  value: "Escolha",
+                  child: Text("Escolha"),
+                ));
+
+                return Container(
+                  child: DropdownButton<String>(
+                    value: selectedCategory ?? dropdownItems.first.value,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue!;
+                      });
+                    },
+                    items: dropdownItems,
+                    hint: const Text('Select Category'),
+                  ),
+                );
+              },
+            ),
+
 
 
 
@@ -405,6 +412,9 @@ class _PoiPageState extends State<POIPage> {
                   snapshot.data!.sort((a, b) => getDistance(a).compareTo(getDistance(b)));
                 } else if(orderByCategory){
                   snapshot.data!.sort((a, b) => a.category!.compareTo(b.category!));
+                }
+                if(selectedCategory != null && selectedCategory != "Escolha"){
+                  snapshot.data!.removeWhere((element) => element.category != selectedCategory);
                 }
                 return Expanded(
                   child: ListView.builder(
