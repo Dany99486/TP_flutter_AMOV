@@ -106,21 +106,21 @@ class _HistoryPageState extends State<HistoryPage> {
                                 child: Text(snapshot.data![index].name),
                               ),
                               Spacer(),
-                              IconButton(
+                              /*IconButton(
                                 icon: Icon(Icons.more_vert),
                                 onPressed: () {
                                   Navigator.pushNamed(
                                       context,
                                       POIDetailPage.routeName,
-                                      /*arguments: {
+                                      *//*arguments: {
                                         'location': location,
                                         'poi': snapshot.data![index],
                                         'changePoiGradeFunction': setSharedPreferences,
                                         'initialPoiGradeValue': allSharedPreferences?[snapshot.data![index].id] as int? ?? -1,
-                                      }*/
+                                      }*//*
                                   );
                                 },
-                              ),
+                              ),*/
 
                             ],
                           ),
