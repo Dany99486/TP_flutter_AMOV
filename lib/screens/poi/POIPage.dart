@@ -353,9 +353,10 @@ class _PoiPageState extends State<POIPage> {
                     child: Text(category.name),
                   ),
                 ).toList();
+
                 dropdownItems.insert(0,DropdownMenuItem<String>(
                   value: "Escolha",
-                  child: Text("Escolha"),
+                  child: Text("Choose"),
                 ));
 
                 return Container(

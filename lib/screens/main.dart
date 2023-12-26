@@ -13,7 +13,6 @@ void initFirebase() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
 }
 
 void main() {
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
         LocationDetailPage.routeName: (context) =>  LocationDetailPage(),
         POIPage.routeName: (context) => const POIPage(title: 'Points of Interest',),
         POIDetailPage.routeName: (context) => POIDetailPage(),
-        HistoryPage.routeName: (context) => const HistoryPage(title: 'POI History'),
+        HistoryPage.routeName: (context) => const HistoryPage(title: 'Points of Interest History'),
       },
     );
   }
