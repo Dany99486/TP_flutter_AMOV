@@ -49,7 +49,15 @@ class _HistoryPageState extends State<HistoryPage> {
       historyList = decodedHistory.map((poiMap) => POI.fromJson(poiMap)).toList();
     }
   }
+  void deleteHistory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('history');
+    setState(() {
+      historyList = [];
+    });
+    _historyStreamController.add([]); // Adicione essa linha para notificar a StreamBuilder
 
+  }
 
 
   @override
@@ -62,7 +70,12 @@ class _HistoryPageState extends State<HistoryPage> {
           style: TextStyle(color: Colors.white),
         ),
         actions: [
-
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.white),
+            onPressed: () {
+              deleteHistory();
+            },
+          ),
         ],
       ),
       body: Column(
