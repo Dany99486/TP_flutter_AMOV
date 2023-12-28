@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -158,6 +156,7 @@ class _PoiPageState extends State<POIPage> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
     loadSharedPreferences();
@@ -173,7 +172,7 @@ class _PoiPageState extends State<POIPage> {
     try {
       querySnapshot = await db.collection('locations').doc(docName).collection('pointsOfInterest').get();
 
-      querySnapshot.docs.forEach((document) {
+      for (var document in querySnapshot.docs) {
 
         POI poi = POI(
           document.get('id') ?? '',
@@ -190,7 +189,7 @@ class _PoiPageState extends State<POIPage> {
           document.get('locationId') ?? '',
         );
         response.add(poi);
-      });
+      }
     } catch (e) {
       print('Error: $e');
       throw Exception('Error fetching locations');
@@ -202,13 +201,13 @@ class _PoiPageState extends State<POIPage> {
       try {
         final poi = await readPoiFromFirebase(docName);
         yield poi;
-        await Future.delayed(Duration(
+        await Future.delayed(const Duration(
             seconds: 5));
       } catch (e) {
         print('Error fetching locations: $e');
         yield <POI>[];
         await Future.delayed(
-            Duration(seconds: 5));
+            const Duration(seconds: 5));
       }
     }
   }
@@ -217,13 +216,13 @@ class _PoiPageState extends State<POIPage> {
       try {
         final locations = await readCategoriesFromFirebase();
         yield locations;
-        await Future.delayed(Duration(
+        await Future.delayed(const Duration(
             seconds: 5));
       } catch (e) {
         print('Error fetching locations: $e');
         yield <Categories>[];
         await Future.delayed(
-            Duration(seconds: 5));
+            const Duration(seconds: 5));
       }
     }
   }
@@ -236,7 +235,7 @@ class _PoiPageState extends State<POIPage> {
     try {
       querySnapshot = await db.collection('category').get();
 
-      querySnapshot.docs.forEach((document) {
+      for (var document in querySnapshot.docs) {
         Categories location = Categories(
           document.get('id') ?? '',
           document.get('name') ?? '',
@@ -245,7 +244,7 @@ class _PoiPageState extends State<POIPage> {
           document.get('createdBy') ?? '',
         );
         response.add(location);
-      });
+      }
     } catch (e) {
       print('Error: $e');
       throw Exception('Error fetching locations');
@@ -261,14 +260,14 @@ class _PoiPageState extends State<POIPage> {
     return Scaffold(
 
       appBar: AppBar(
-        backgroundColor: Color(0xFF02458A),
+        backgroundColor: const Color(0xFF02458A),
         title: Text(
           location.name,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.history, color: Colors.white),
+            icon: const Icon(Icons.history, color: Colors.white),
             onPressed: () {
               Navigator.pushNamed(
                 context,
@@ -281,8 +280,8 @@ class _PoiPageState extends State<POIPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Divider(),
-          Text(
+          const Divider(),
+          const Text(
             'Order by',
             style: TextStyle(
               fontSize: 18,
@@ -293,7 +292,7 @@ class _PoiPageState extends State<POIPage> {
             children: [
               Expanded(
                 child: CheckboxListTile(
-                  title: Text('Distance'),
+                  title: const Text('Distance'),
                   value: orderByDistance,
                   onChanged: (value) {
                     setState(() {
@@ -305,7 +304,7 @@ class _PoiPageState extends State<POIPage> {
               ),
               Expanded(
                 child: CheckboxListTile(
-                  title: Text('Name'),
+                  title: const Text('Name'),
                   value: orderByAlphabetic,
                   onChanged: (value) {
                     setState(() {
@@ -323,7 +322,7 @@ class _PoiPageState extends State<POIPage> {
           Row(children: [
             Expanded(
               child: CheckboxListTile(
-                  title: Text('Category'),
+                  title: const Text('Category'),
                   value: orderByCategory,
                   onChanged: (value) {
                     setState(() {
@@ -338,7 +337,7 @@ class _PoiPageState extends State<POIPage> {
               builder: (context, snapshot) {
                 if (!snapshot.hasData || snapshot.data == null) {
                   // Handle the case where data is not available yet
-                  return CircularProgressIndicator(); // ou algum outro indicador de carregamento
+                  return const CircularProgressIndicator(); // ou algum outro indicador de carregamento
                 }
 
                 List<Categories> categories = snapshot.data!;
@@ -354,7 +353,7 @@ class _PoiPageState extends State<POIPage> {
                   ),
                 ).toList();
 
-                dropdownItems.insert(0,DropdownMenuItem<String>(
+                dropdownItems.insert(0,const DropdownMenuItem<String>(
                   value: "Escolha",
                   child: Text("Choose"),
                 ));
@@ -379,7 +378,7 @@ class _PoiPageState extends State<POIPage> {
 
           ],
           ),
-          Divider(), // Adiciona um Divider abaixo da Row
+          const Divider(), // Adiciona um Divider abaixo da Row
           StreamBuilder<List<POI>>(
             stream: getPoiStream(location.id),
             builder: (context, snapshot) {
@@ -428,9 +427,9 @@ class _PoiPageState extends State<POIPage> {
                               Expanded(
                                 child: Text(snapshot.data![index].name),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               IconButton(
-                                icon: Icon(Icons.more_vert),
+                                icon: const Icon(Icons.more_vert),
                                 onPressed: () {
                                   saveToHistory(snapshot.data![index]);
                                   Navigator.pushNamed(
@@ -449,22 +448,22 @@ class _PoiPageState extends State<POIPage> {
                             ],
                           ),
                           subtitle: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
+                                const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 10.0), // Adicionando padding ao Divider
                                   child: Divider(), // Divider entre o title e o subtitle
                                 ),
                                 Row(
                                   children: [
-                                    Icon(Icons.thumb_up),
-                                    SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                    const Icon(Icons.thumb_up),
+                                    const SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
                                     Text("${snapshot.data![index].likes}"),
-                                    Spacer(),
-                                    Icon(Icons.thumb_down),
-                                    SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                    const Spacer(),
+                                    const Icon(Icons.thumb_down),
+                                    const SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
                                     Text("${snapshot.data![index].dislikes}"),
                                   ],
                                 ),

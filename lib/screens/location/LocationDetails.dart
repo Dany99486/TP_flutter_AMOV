@@ -6,6 +6,8 @@ import '../../models/Local.dart';
 class LocationDetailPage extends StatefulWidget {
   static const String routeName = '/locationDetail';
 
+  const LocationDetailPage({super.key});
+
   @override
   _LocationDetailPageState createState() => _LocationDetailPageState();
 }
@@ -94,7 +96,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
           children: [
             Text(
               location.name,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -105,11 +107,11 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
             future: ref.getDownloadURL(),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Center(child: Text('Error loading image'));
+                return const Center(child: Text('Error loading image'));
               } else if (snapshot.hasData) {
-                return Container(
+                return SizedBox(
                   height: 200, // Defina a altura da imagem
                   width: double.infinity,
                   child: Image.network(
@@ -118,17 +120,17 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                   ),
                 );
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             },
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.symmetric(vertical: 40.0),
             child: Divider(),
           ),
           initialLocationGradeValue == 1 || initialLocationGradeValue == 2
               ? Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -143,18 +145,18 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                         showRatingChangedDialog(context);
                       }
                   },
-                  icon: Icon(Icons.thumb_up),
-                  color: isLiked ? Color(0xFF02458A) : Colors.grey,
+                  icon: const Icon(Icons.thumb_up),
+                  color: isLiked ? const Color(0xFF02458A) : Colors.grey,
                   iconSize: 56.0,
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Column(
                   children: [
-                    Text('Likes: ${location.likes}   ', style: TextStyle(fontSize: 16)),
-                    Text('Dislikes: ${location.dislikes}   ', style: TextStyle(fontSize: 16)),
+                    Text('Likes: ${location.likes}   ', style: const TextStyle(fontSize: 16)),
+                    Text('Dislikes: ${location.dislikes}   ', style: const TextStyle(fontSize: 16)),
                   ],
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 IconButton(
                   onPressed: () {
                     if(isLiked) {
@@ -166,15 +168,15 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                       showRatingChangedDialog(context);
                     }
                   },
-                  color: !isLiked ? Color(0xFF02458A) : Colors.grey,
-                  icon: Icon(Icons.thumb_down),
+                  color: !isLiked ? const Color(0xFF02458A) : Colors.grey,
+                  icon: const Icon(Icons.thumb_down),
                   iconSize: 56.0,
                 ),
               ],
             ),
 
           ): Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -189,18 +191,18 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                       showRatingChangedDialog(context);
                     }
                   },
-                  icon: Icon(Icons.thumb_up),
+                  icon: const Icon(Icons.thumb_up),
                   color: Colors.grey,
                   iconSize: 56.0,
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Column(
                   children: [
-                    Text('Likes: ${location.likes}', style: TextStyle(fontSize: 16)),
-                    Text('Dislikes: ${location.dislikes}', style: TextStyle(fontSize: 16)),
+                    Text('Likes: ${location.likes}', style: const TextStyle(fontSize: 16)),
+                    Text('Dislikes: ${location.dislikes}', style: const TextStyle(fontSize: 16)),
                   ],
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -210,7 +212,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
                     });
                     showRatingChangedDialog(context);
                   },
-                  icon: Icon(Icons.thumb_down),
+                  icon: const Icon(Icons.thumb_down),
                   color: Colors.grey,
                   iconSize: 56.0,
                 ),
@@ -223,7 +225,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   const Text(
                     'Description:',
                     style: TextStyle(
@@ -260,7 +262,7 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
       bottomNavigationBar: Container(
         margin: const EdgeInsets.only(top: 10),
         color: Colors.white,
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -284,15 +286,15 @@ void showRatingChangedDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Rate changed!'),
-        content: Text('Rate changed with success'),
+        title: const Text('Rate changed!'),
+        content: const Text('Rate changed with success'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       );

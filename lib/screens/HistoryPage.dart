@@ -2,10 +2,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tp_flutter/screens/poi/POIDetails.dart';
 
 import '../models/POI.dart';
 
@@ -20,7 +18,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   late List<POI> historyList = [];
-  StreamController<List<POI>> _historyStreamController = StreamController<List<POI>>();
+  final StreamController<List<POI>> _historyStreamController = StreamController<List<POI>>();
 
 
   @override
@@ -64,14 +62,14 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF02458A),
+        backgroundColor: const Color(0xFF02458A),
         title: Text(
           widget.title,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete, color: Colors.white),
+            icon: const Icon(Icons.delete, color: Colors.white),
             onPressed: () {
               deleteHistory();
             },
@@ -105,7 +103,7 @@ class _HistoryPageState extends State<HistoryPage> {
                               Expanded(
                                 child: Text(snapshot.data![index].name),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               /*IconButton(
                                 icon: Icon(Icons.more_vert),
                                 onPressed: () {

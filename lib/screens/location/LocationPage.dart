@@ -98,6 +98,7 @@ class _LocationPageState extends State<LocationPage> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
     loadSharedPreferences();
@@ -109,13 +110,13 @@ class _LocationPageState extends State<LocationPage> {
       try {
         final locations = await readLocationsFromFirebase();
         yield locations;
-        await Future.delayed(Duration(
+        await Future.delayed(const Duration(
             seconds: 5));
       } catch (e) {
         print('Error fetching locations: $e');
         yield <Local>[];
         await Future.delayed(
-            Duration(seconds: 5));
+            const Duration(seconds: 5));
       }
     }
   }
@@ -128,7 +129,7 @@ class _LocationPageState extends State<LocationPage> {
     try {
       querySnapshot = await db.collection('locations').get();
 
-      querySnapshot.docs.forEach((document) {
+      for (var document in querySnapshot.docs) {
         Local location = Local(
           document.get('id') ?? '',
           document.get('name') ?? '',
@@ -144,7 +145,7 @@ class _LocationPageState extends State<LocationPage> {
           (document.get('dislikes') ?? 0).toInt(),
         );
         response.add(location);
-      });
+      }
     } catch (e) {
       print('Error: $e');
       throw Exception('Error fetching locations');
@@ -156,14 +157,14 @@ class _LocationPageState extends State<LocationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF02458A),
+        backgroundColor: const Color(0xFF02458A),
         title: Text(
           widget.title,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.history, color: Colors.white),
+            icon: const Icon(Icons.history, color: Colors.white),
             onPressed: () {
               Navigator.pushNamed(
                 context,
@@ -175,8 +176,8 @@ class _LocationPageState extends State<LocationPage> {
       body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Divider(),
-            Text(
+            const Divider(),
+            const Text(
               'Order by',
               style: TextStyle(
                 fontSize: 18,
@@ -187,7 +188,7 @@ class _LocationPageState extends State<LocationPage> {
               children: [
                 Expanded(
                   child: CheckboxListTile(
-                    title: Text('Distance'),
+                    title: const Text('Distance'),
                     value: orderByDistance,
                     onChanged: (value) {
                       setState(() {
@@ -199,7 +200,7 @@ class _LocationPageState extends State<LocationPage> {
                 ),
                 Expanded(
                   child: CheckboxListTile(
-                    title: Text('Name'),
+                    title: const Text('Name'),
                     value: orderByAlphabetic,
                     onChanged: (value) {
                       setState(() {
@@ -210,7 +211,7 @@ class _LocationPageState extends State<LocationPage> {
                 ),
               ],
             ),
-            Divider(), // Adiciona um Divider abaixo da Row
+            const Divider(), // Adiciona um Divider abaixo da Row
             StreamBuilder<List<Local>>(
               stream: getLocationsStream(),
               builder: (context, snapshot) {
@@ -238,9 +239,9 @@ class _LocationPageState extends State<LocationPage> {
                                 Expanded(
                                   child:  Text(snapshot.data![index].name),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 IconButton(
-                                  icon: Icon(Icons.more_vert),
+                                  icon: const Icon(Icons.more_vert),
                                   onPressed: () {
                                     Navigator.pushNamed(
                                         context,
@@ -254,7 +255,7 @@ class _LocationPageState extends State<LocationPage> {
                                   },
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.location_on),
+                                  icon: const Icon(Icons.location_on),
                                   onPressed: () {
                                     Navigator.pushNamed(
                                         context,
@@ -268,22 +269,22 @@ class _LocationPageState extends State<LocationPage> {
                               ],
                             ),
                             subtitle: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
+                                  const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 10.0), // Adicionando padding ao Divider
                                     child: Divider(), // Divider entre o title e o subtitle
                                   ),
                                   Row(
                                     children: [
-                                      Icon(Icons.thumb_up),
-                                      SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                      const Icon(Icons.thumb_up),
+                                      const SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
                                       Text("${snapshot.data![index].likes}"),
-                                      Spacer(),
-                                      Icon(Icons.thumb_down),
-                                      SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
+                                      const Spacer(),
+                                      const Icon(Icons.thumb_down),
+                                      const SizedBox(width: 4), // Adicionando espaço entre o ícone e o texto
                                       Text("${snapshot.data![index].dislikes}"),
                                     ],
                                   ),

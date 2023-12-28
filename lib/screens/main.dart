@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../firebase_options.dart';
-import '../models/Local.dart';
 import 'HistoryPage.dart';
 import 'location/LocationDetails.dart';
 import 'location/LocationPage.dart';
@@ -29,15 +27,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'PraticalWork2',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF02458A)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF02458A)),
         useMaterial3: true,
       ),
       initialRoute: LocationPage.routeName,
       routes: {
         LocationPage.routeName : (context) => const LocationPage(title: 'Locations'),
-        LocationDetailPage.routeName: (context) =>  LocationDetailPage(),
+        LocationDetailPage.routeName: (context) =>  const LocationDetailPage(),
         POIPage.routeName: (context) => const POIPage(title: 'Points of Interest',),
-        POIDetailPage.routeName: (context) => POIDetailPage(),
+        POIDetailPage.routeName: (context) => const POIDetailPage(),
         HistoryPage.routeName: (context) => const HistoryPage(title: 'POI History'),
       },
     );
