@@ -44,8 +44,8 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCigL1MAhyLp4ZkpNYmuG7yqoX4O41dTrA',
-    appId: '1:758027068093:web:b96907c6adcf0979f14dd4',
+    apiKey: '',
+    appId: '',
     messagingSenderId: '758027068093',
     projectId: 'praticalworkamov2023-b4207',
     authDomain: 'praticalworkamov2023-b4207.firebaseapp.com',
@@ -54,16 +54,16 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA_XlbRQAO694l0Okpvqhypj-Mj9lh4qtE',
-    appId: '1:758027068093:android:eb432992b774fee9f14dd4',
+    apiKey: '',
+    appId: '',
     messagingSenderId: '758027068093',
     projectId: 'praticalworkamov2023-b4207',
     storageBucket: 'praticalworkamov2023-b4207.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDzoulrG1BU5G_lPiW-qikxxfR9pymgIqw',
-    appId: '1:758027068093:ios:c5183e2800f0a887f14dd4',
+    apiKey: '',
+    appId: '',
     messagingSenderId: '758027068093',
     projectId: 'praticalworkamov2023-b4207',
     storageBucket: 'praticalworkamov2023-b4207.appspot.com',
@@ -71,8 +71,8 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDzoulrG1BU5G_lPiW-qikxxfR9pymgIqw',
-    appId: '1:758027068093:ios:0a7cf8e693928946f14dd4',
+    apiKey: '',
+    appId: '',
     messagingSenderId: '758027068093',
     projectId: 'praticalworkamov2023-b4207',
     storageBucket: 'praticalworkamov2023-b4207.appspot.com',
